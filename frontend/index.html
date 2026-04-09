@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Kasir</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .main-section {
+            flex: 1;
+            padding: 20px;
+            background-color: white;
+            overflow-y: auto;
+        }
+
+        .sidebar {
+            width: 300px;
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #34495e;
+            margin: 15px 0 10px 0;
+            font-size: 16px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+
+        .nav-tabs button {
+            padding: 10px 15px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            color: #7f8c8d;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .nav-tabs button.active {
+            color: #2980b9;
+            border-bottom-color: #2980b9;
+        }
+
+        .nav-tabs button:hover {
+            color: #2980b9;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #2c3e50;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #2980b9;
+            box-shadow: 0 0 5px rgba(41, 128, 185, 0.1);
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #2980b9;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #2471a3;
+        }
+
+        button.btn-danger {
+            background-color: #e74c3c;
+        }
+
+        button.btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        button.btn-success {
+            background-color: #27ae60;
+        }
+
+        button.btn-success:hover {
+            background-color: #229954;
+        }
+
+        button.btn-small {
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+
+        button.btn-full {
+            width: 100%;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .product-card {
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background-color: #f9f9f9;
+        }
+
+        .product-card:hover {
+            border-color: #2980b9;
+            box-shadow: 0 2px 8px rgba(41, 128, 185, 0.15);
+            background-color: #f0f8ff;
+        }
+
+        .product-name {
+            font-weight: 500;
+            font-size: 13px;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+
+        .product-price {
+            color: #27ae60;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .cart-item {
+            background-color: #f9f9f9;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+            border-left: 3px solid #2980b9;
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .item-name {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .item-price {
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        .item-controls {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+
+        .item-controls input {
+            width: 50px;
+            padding: 5px;
+            text-align: center;
+        }
+
+        .item-subtotal {
+            color: #7f8c8d;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .sidebar h2 {
+            color: #ecf0f1;
+            border-bottom: 1px solid #34495e;
+            padding-bottom: 10px;
+            margin-top: 20px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #34495e;
+        }
+
+        .summary-label {
+            color: #bdc3c7;
+        }
+
+        .summary-value {
+            color: white;
+            font-weight: bold;
+        }
+
+        .total-section {
+            background-color: #27ae60;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+
+        .total-price {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #bdc3c7;
+        }
+
+        th {
+            background-color: #ecf0f1;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .alert {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .simulation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .simulation-card {
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .simulation-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+        }
+
+        .simulation-card p {
+            margin: 0 0 15px 0;
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .simulation-card button {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.2);
+            border: 1px solid white;
+            color: white;
+        }
+
+        .simulation-card button:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .btn-simulation {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin-right: 5px;
+         }
+
+        .btn-simulation:hover {
+            background: linear-gradient(135deg, #5568d3 0%, #653a8e 100%);
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const API_URL = 'http://localhost:5000/api';
+
+        function PosApp() {
+            const [activeTab, setActiveTab] = React.useState('cashier');
+            const [products, setProducts] = React.useState([]);
+            const [cart, setCart] = React.useState([]);
+            const [discount, setDiscount] = React.useState(0);
+            const [payment, setPayment] = React.useState(0);
+            const [transactions, setTransactions] = React.useState([]);
+            const [message, setMessage] = React.useState('');
+            const [simulationStats, setSimulationStats] = React.useState(null);
+            const [simulationLoading, setSimulationLoading] = React.useState(false);
+
+            // Form untuk produk
+            const [productForm, setProductForm] = React.useState({
+                name: '',
+                price: '',
+                category: '',
+                stock: ''
+            });
+
+            // Load produk saat aplikasi dimulai
+            React.useEffect(() => {
+                loadProducts();
+            }, []);
+
+            const loadProducts = async () => {
+                try {
+                    const response = await fetch(`${API_URL}/products`);
+                    const data = await response.json();
+                    setProducts(data);
+                } catch (error) {
+                    showMessage('Error memuat produk: ' + error.message, 'error');
+                }
+            };
+
+            const loadTransactions = async () => {
+                try {
+                    const response = await fetch(`${API_URL}/transactions`);
+                    const data = await response.json();
+                    setTransactions(data);
+                } catch (error) {
+                    showMessage('Error memuat transaksi: ' + error.message, 'error');
+                }
+            };
+
+            const showMessage = (msg, type = 'success') => {
+                setMessage({ text: msg, type });
+                setTimeout(() => setMessage(''), 3000);
+            };
+
+            // Tambah produk ke keranjang
+            const addToCart = (product) => {
+                const existingItem = cart.find(item => item.id === product.id);
+                if (existingItem) {
+                    updateCartQuantity(product.id, existingItem.quantity + 1);
+                } else {
+                    setCart([...cart, { ...product, quantity: 1 }]);
+                }
+            };
+
+            // Update kuantitas item
+            const updateCartQuantity = (productId, quantity) => {
+                if (quantity <= 0) {
+                    removeFromCart(productId);
+                } else {
+                    setCart(cart.map(item =>
+                        item.id === productId ? { ...item, quantity } : item
+                    ));
+                }
+            };
+
+            // Hapus item dari keranjang
+            const removeFromCart = (productId) => {
+                setCart(cart.filter(item => item.id !== productId));
+            };
+
+            // Hitung total
+            const calculateTotal = () => {
+                return cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            };
+
+            const totalPrice = calculateTotal();
+            const finalPrice = totalPrice - discount;
+            const changeAmount = payment - finalPrice;
+
+            // Proses pembayaran
+            const processPayment = async () => {
+                if (cart.length === 0) {
+                    showMessage('Keranjang masih kosong!', 'error');
+                    return;
+                }
+
+                if (payment < finalPrice) {
+                    showMessage('Pembayaran tidak cukup!', 'error');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`${API_URL}/transactions`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            items: cart.map(item => ({
+                                id: item.id,
+                                name: item.name,
+                                quantity: item.quantity,
+                                price: item.price,
+                                subtotal: item.price * item.quantity
+                            })),
+                            totalPrice,
+                            discount,
+                            payment
+                        })
+                    });
+
+                    if (response.ok) {
+                        showMessage(`Transaksi berhasil! Kembalian: Rp${changeAmount.toLocaleString('id-ID')}`);
+                        setCart([]);
+                        setDiscount(0);
+                        setPayment(0);
+                    } else {
+                        showMessage('Error memproses transaksi', 'error');
+                    }
+                } catch (error) {
+                    showMessage('Error: ' + error.message, 'error');
+                }
+            };
+
+            // Tambah produk baru
+            const handleAddProduct = async () => {
+                if (!productForm.name || !productForm.price) {
+                    showMessage('Nama dan harga harus diisi!', 'error');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`${API_URL}/products`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            name: productForm.name,
+                            price: parseFloat(productForm.price),
+                            category: productForm.category,
+                            stock: parseInt(productForm.stock) || 0
+                        })
+                    });
+
+                    if (response.ok) {
+                        showMessage('Produk berhasil ditambahkan!');
+                        setProductForm({ name: '', price: '', category: '', stock: '' });
+                        loadProducts();
+                    } else {
+                        showMessage('Error menambahkan produk', 'error');
+                    }
+                } catch (error) {
+                    showMessage('Error: ' + error.message, 'error');
+                }
+            };
+
+            // Delete produk
+            const deleteProduct = async (id) => {
+                if (!window.confirm('Yakin ingin menghapus produk ini?')) return;
+
+                try {
+                    const response = await fetch(`${API_URL}/products/${id}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (response.ok) {
+                        showMessage('Produk berhasil dihapus!');
+                        loadProducts();
+                    } else {
+                        showMessage('Error menghapus produk', 'error');
+                    }
+                } catch (error) {
+                    showMessage('Error: ' + error.message, 'error');
+                }
+            };
+
+            // Simulation functions
+            const initSimulation = async () => {
+                setSimulationLoading(true);
+                try {
+                    const response = await fetch(`${API_URL}/simulation/init`, {
+                        method: 'POST'
+                    });
+                    const data = await response.json();
+                    showMessage(`✅ Simulasi dimulai! ${data.stats.products} produk + ${data.stats.transactions} transaksi`);
+                    loadProducts();
+                    getSimulationStats();
+                } catch (error) {
+                    showMessage('Error: ' + error.message, 'error');
+                } finally {
+                    setSimulationLoading(false);
+                }
+            };
+
+            const getSimulationStats = async () => {
+                try {
+                    const response = await fetch(`${API_URL}/simulation/stats`);
+                    const data = await response.json();
+                    setSimulationStats(data.stats);
+                } catch (error) {
+                    console.error('Error fetch stats:', error);
+                }
+            };
+
+            const addMockTransactions = async (count = 10) => {
+                setSimulationLoading(true);
+                try {
+                    const response = await fetch(`${API_URL}/simulation/add-transactions`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ count })
+                    });
+                    const data = await response.json();
+                    showMessage(`✅ ${count} transaksi ditambahkan!`);
+                    getSimulationStats();
+                } catch (error) {
+                    showMessage('Error: ' + error.message, 'error');
+                } finally {
+                    setSimulationLoading(false);
+                }
+            };
+
+            const addMockProducts = async (count = 5) => {
+                setSimulationLoading(true);
+                try {
+                    const response = await fetch(`${API_URL}/simulation/add-products`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ count })
+                    });
+                    const data = await response.json();
+                    showMessage(`✅ ${count} produk ditambahkan!`);
+                    loadProducts();
+                    getSimulationStats();
+                } catch (error) {
+                    showMessage('Error: ' + error.message, 'error');
+                } finally {
+                    setSimulationLoading(false);
+                }
+            };
+
+            const clearTransactions = async () => {
+                if (!window.confirm('Hapus semua transaksi?')) return;
+                setSimulationLoading(true);
+                try {
+                    const response = await fetch(`${API_URL}/simulation/clear-transactions`, {
+                        method: 'POST'
+                    });
+                    showMessage('✅ Semua transaksi dihapus!');
+                    getSimulationStats();
+                } catch (error) {
+                    showMessage('Error: ' + error.message, 'error');
+                } finally {
+                    setSimulationLoading(false);
+                }
+            };
+
+            const resetDatabase = async () => {
+                if (!window.confirm('⚠️  Reset DATABASE? Data akan terhapus semua!')) return;
+                setSimulationLoading(true);
+                try {
+                    const response = await fetch(`${API_URL}/simulation/reset`, {
+                        method: 'POST'
+                    });
+                    showMessage('✅ Database berhasil direset!');
+                    setSimulationStats(null);
+                    loadProducts();
+                } catch (error) {
+                    showMessage('Error: ' + error.message, 'error');
+                } finally {
+                    setSimulationLoading(false);
+                }
+            };
+
+            return (
+                <div className="container">
+                    <div className="main-section">
+                        {message && (
+                            <div className={`alert alert-${message.type}`}>
+                                {message.text}
+                            </div>
+                        )}
+
+                        <div className="nav-tabs">
+                            <button
+                                className={activeTab === 'cashier' ? 'active' : ''}
+                                onClick={() => setActiveTab('cashier')}
+                            >
+                                💳 Kasir
+                            </button>
+                            <button
+                                className={activeTab === 'products' ? 'active' : ''}
+                                onClick={() => setActiveTab('products')}
+                            >
+                                📦 Produk
+                            </button>
+                            <button
+                                className={activeTab === 'transactions' ? 'active' : ''}
+                                onClick={() => {
+                                    setActiveTab('transactions');
+                                    loadTransactions();
+                                }}
+                            >
+                                📋 Riwayat
+                            </button>
+                            <button
+                                className={activeTab === 'simulation' ? 'active' : ''}
+                                onClick={() => {
+                                    setActiveTab('simulation');
+                                    getSimulationStats();
+                                }}
+                            >
+                                🧪 Simulasi
+                            </button>
+                        </div>
+
+                        {/* Tab Kasir */}
+                        {activeTab === 'cashier' && (
+                            <div className="section active">
+                                <h1>🛒 Sistem Kasir</h1>
+                                <h2>Pilih Produk</h2>
+                                {products.length > 0 ? (
+                                    <div className="product-grid">
+                                        {products.map(product => (
+                                            <div
+                                                key={product.id}
+                                                className="product-card"
+                                                onClick={() => addToCart(product)}
+                                            >
+                                                <div className="product-name">{product.name}</div>
+                                                <div className="product-price">
+                                                    Rp{product.price.toLocaleString('id-ID')}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="empty-state">
+                                        <div className="empty-state-icon">📭</div>
+                                        <p>Tidak ada produk. Tambahkan produk di tab Produk.</p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Tab Produk */}
+                        {activeTab === 'products' && (
+                            <div className="section active">
+                                <h1>📦 Kelola Produk</h1>
+
+                                <div style={{ marginBottom: '30px', paddingBottom: '20px', borderBottom: '2px solid #ecf0f1' }}>
+                                    <h2>Tambah Produk Baru</h2>
+                                    <div className="form-group">
+                                        <label>Nama Produk</label>
+                                        <input
+                                            type="text"
+                                            value={productForm.name}
+                                            onChange={(e) => setProductForm({ ...productForm, name: e.target.value })}
+                                            placeholder="Masukkan nama produk"
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Harga (Rp)</label>
+                                        <input
+                                            type="number"
+                                            value={productForm.price}
+                                            onChange={(e) => setProductForm({ ...productForm, price: e.target.value })}
+                                            placeholder="Masukkan harga"
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Kategori</label>
+                                        <input
+                                            type="text"
+                                            value={productForm.category}
+                                            onChange={(e) => setProductForm({ ...productForm, category: e.target.value })}
+                                            placeholder="Misal: Minuman, Makanan, dll"
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Stok</label>
+                                        <input
+                                            type="number"
+                                            value={productForm.stock}
+                                            onChange={(e) => setProductForm({ ...productForm, stock: e.target.value })}
+                                            placeholder="Masukkan stok"
+                                        />
+                                    </div>
+                                    <button className="btn-full btn-success" onClick={handleAddProduct}>
+                                        ➕ Tambah Produk
+                                    </button>
+                                </div>
+
+                                <h2>Daftar Produk</h2>
+                                {products.length > 0 ? (
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Nama</th>
+                                                <th>Harga</th>
+                                                <th>Kategori</th>
+                                                <th>Stok</th>
+                                                <th>Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {products.map(product => (
+                                                <tr key={product.id}>
+                                                    <td>{product.name}</td>
+                                                    <td>Rp{product.price.toLocaleString('id-ID')}</td>
+                                                    <td>{product.category}</td>
+                                                    <td>{product.stock}</td>
+                                                    <td>
+                                                        <button
+                                                            className="btn-small btn-danger"
+                                                            onClick={() => deleteProduct(product.id)}
+                                                        >
+                                                            Hapus
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                ) : (
+                                    <div className="empty-state">
+                                        <div className="empty-state-icon">📭</div>
+                                        <p>Belum ada produk. Tambahkan produk di form di atas.</p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Tab Transaksi */}
+                        {activeTab === 'transactions' && (
+                            <div className="section active">
+                                <h1>📋 Riwayat Transaksi</h1>
+                                {transactions.length > 0 ? (
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Tanggal</th>
+                                                <th>Total Harga</th>
+                                                <th>Diskon</th>
+                                                <th>Bayar</th>
+                                                <th>Kembalian</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {transactions.map(tx => (
+                                                <tr key={tx.id}>
+                                                    <td>#{tx.id}</td>
+                                                    <td>{new Date(tx.transaction_date).toLocaleString('id-ID')}</td>
+                                                    <td>Rp{tx.total_price.toLocaleString('id-ID')}</td>
+                                                    <td>Rp{tx.discount.toLocaleString('id-ID')}</td>
+                                                    <td>Rp{tx.payment.toLocaleString('id-ID')}</td>
+                                                    <td>Rp{tx.change_amount.toLocaleString('id-ID')}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                ) : (
+                                    <div className="empty-state">
+                                        <div className="empty-state-icon">📭</div>
+                                        <p>Belum ada transaksi.</p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Tab Simulasi */}
+                        {activeTab === 'simulation' && (
+                            <div className="section active">
+                                <h1>🧪 Mode Simulasi</h1>
+                                <p style={{ marginBottom: '20px', color: '#7f8c8d' }}>
+                                    Gunakan tools ini untuk test aplikasi dengan data sample
+                                </p>
+
+                                {simulationStats && (
+                                    <>
+                                        <h2>📊 Statistik Simulasi</h2>
+                                        <div className="stats-grid">
+                                            <div className="stat-box">
+                                                <div className="stat-label">Total Produk</div>
+                                                <div className="stat-value">{simulationStats.totalProducts}</div>
+                                            </div>
+                                            <div className="stat-box">
+                                                <div className="stat-label">Total Transaksi</div>
+                                                <div className="stat-value">{simulationStats.totalTransactions}</div>
+                                            </div>
+                                            <div className="stat-box">
+                                                <div className="stat-label">Total Revenue</div>
+                                                <div className="stat-value">Rp{(simulationStats.totalRevenue || 0).toLocaleString('id-ID')}</div>
+                                            </div>
+                                            <div className="stat-box">
+                                                <div className="stat-label">Items Terjual</div>
+                                                <div className="stat-value">{simulationStats.totalItemsSold}</div>
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
+
+                                <h2>⚙️ Kontrol Simulasi</h2>
+                                <div className="simulation-grid">
+                                    <div className="simulation-card">
+                                        <h3>🚀 Inisialisasi Simulasi</h3>
+                                        <p>Buat data sample: 10 produk + 20 transaksi</p>
+                                        <button
+                                            className="btn-simulation"
+                                            onClick={initSimulation}
+                                            disabled={simulationLoading}
+                                        >
+                                            {simulationLoading ? '🔄 Loading...' : '▶ Mulai Simulasi'}
+                                        </button>
+                                    </div>
+
+                                    <div className="simulation-card">
+                                        <h3>➕ Tambah Transaksi</h3>
+                                        <p>Tambahkan 10 transaksi random</p>
+                                        <button
+                                            className="btn-simulation"
+                                            onClick={() => addMockTransactions(10)}
+                                            disabled={simulationLoading}
+                                        >
+                                            {simulationLoading ? '🔄 Loading...' : '➕ Tambah 10'}
+                                        </button>
+                                    </div>
+
+                                    <div className="simulation-card">
+                                        <h3>➕ Tambah Produk</h3>
+                                        <p>Tambahkan 5 produk random</p>
+                                        <button
+                                            className="btn-simulation"
+                                            onClick={() => addMockProducts(5)}
+                                            disabled={simulationLoading}
+                                        >
+                                            {simulationLoading ? '🔄 Loading...' : '➕ Tambah 5'}
+                                        </button>
+                                    </div>
+
+                                    <div className="simulation-card">
+                                        <h3>🗑️ Hapus Transaksi</h3>
+                                        <p>Hapus semua transaksi, produk tetap</p>
+                                        <button
+                                            className="btn-simulation btn-danger"
+                                            onClick={clearTransactions}
+                                            disabled={simulationLoading}
+                                            style={{ background: 'linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)' }}
+                                        >
+                                            {simulationLoading ? '🔄 Loading...' : '🗑️ Hapus Semua'}
+                                        </button>
+                                    </div>
+
+                                    <div className="simulation-card">
+                                        <h3>💣 Reset Database</h3>
+                                        <p>Hapus semua data (irreversible!)</p>
+                                        <button
+                                            className="btn-simulation btn-danger"
+                                            onClick={resetDatabase}
+                                            disabled={simulationLoading}
+                                            style={{ background: 'linear-gradient(135deg, #c0392b 0%, #833f14 100%)' }}
+                                        >
+                                            {simulationLoading ? '🔄 Loading...' : '💣 Reset Total'}
+                                        </button>
+                                    </div>
+
+                                    <div className="simulation-card">
+                                        <h3>🔄 Refresh Stats</h3>
+                                        <p>Reload statistik simulasi</p>
+                                        <button
+                                            className="btn-simulation"
+                                            onClick={getSimulationStats}
+                                            disabled={simulationLoading}
+                                        >
+                                            {simulationLoading ? '🔄 Loading...' : '🔄 Refresh'}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Sidebar Keranjang */}
+                    {activeTab === 'cashier' && (
+                        <div className="sidebar">
+                            <h2>🛒 KERANJANG</h2>
+
+                            {cart.length > 0 ? (
+                                <>
+                                    {cart.map(item => (
+                                        <div key={item.id} className="cart-item">
+                                            <div className="item-header">
+                                                <span className="item-name">{item.name}</span>
+                                                <button
+                                                    className="btn-small btn-danger"
+                                                    onClick={() => removeFromCart(item.id)}
+                                                >
+                                                    ✕
+                                                </button>
+                                            </div>
+                                            <div className="item-controls">
+                                                <button
+                                                    className="btn-small"
+                                                    onClick={() => updateCartQuantity(item.id, item.quantity - 1)}
+                                                >
+                                                    −
+                                                </button>
+                                                <input
+                                                    type="number"
+                                                    value={item.quantity}
+                                                    onChange={(e) => updateCartQuantity(item.id, parseInt(e.target.value) || 1)}
+                                                />
+                                                <button
+                                                    className="btn-small"
+                                                    onClick={() => updateCartQuantity(item.id, item.quantity + 1)}
+                                                >
+                                                    +
+                                                </button>
+                                            </div>
+                                            <div className="item-price">
+                                                Rp{(item.price * item.quantity).toLocaleString('id-ID')}
+                                            </div>
+                                        </div>
+                                    ))}
+
+                                    <h2>TOTALS</h2>
+                                    <div className="summary-row">
+                                        <span className="summary-label">Subtotal:</span>
+                                        <span className="summary-value">Rp{totalPrice.toLocaleString('id-ID')}</span>
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label>Diskon (Rp)</label>
+                                        <input
+                                            type="number"
+                                            value={discount}
+                                            onChange={(e) => setDiscount(parseFloat(e.target.value) || 0)}
+                                            min="0"
+                                        />
+                                    </div>
+
+                                    <div className="summary-row">
+                                        <span className="summary-label">Total Bayar:</span>
+                                        <span className="summary-value">Rp{finalPrice.toLocaleString('id-ID')}</span>
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label>Uang Diterima (Rp)</label>
+                                        <input
+                                            type="number"
+                                            value={payment}
+                                            onChange={(e) => setPayment(parseFloat(e.target.value) || 0)}
+                                            min="0"
+                                        />
+                                    </div>
+
+                                    <div className="total-section">
+                                        <div>Kembalian:</div>
+                                        <div className="total-price">
+                                            Rp{changeAmount.toLocaleString('id-ID')}
+                                        </div>
+                                    </div>
+
+                                    <button
+                                        className="btn-full btn-success"
+                                        style={{ fontSize: '16px', padding: '15px' }}
+                                        onClick={processPayment}
+                                    >
+                                        ✓ SELESAIKAN TRANSAKSI
+                                    </button>
+                                    <button
+                                        className="btn-full btn-danger"
+                                        style={{ marginTop: '10px' }}
+                                        onClick={() => {
+                                            setCart([]);
+                                            setDiscount(0);
+                                            setPayment(0);
+                                        }}
+                                    >
+                                        🗑 BATAL
+                                    </button>
+                                </>
+                            ) : (
+                                <div className="empty-state">
+                                    <div className="empty-state-icon">🛒</div>
+                                    <p>Keranjang kosong</p>
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        ReactDOM.render(<PosApp />, document.getElementById('root'));
+    </script>
+</body>
+</html>
